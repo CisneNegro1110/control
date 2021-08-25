@@ -14,10 +14,10 @@ struct controlApp: App {
     init() {
         FirebaseApp.configure()
     }
-    
+    @State var index = 0
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(index: $index)
         }
     }
 }

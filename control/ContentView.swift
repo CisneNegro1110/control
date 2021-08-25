@@ -1,9 +1,12 @@
+
 //
 //  ContentView.swift
 //  control
 //
 //  Created by Jesús Francisco Leyva Juárez on 24/03/21.
 //
+
+
 
 import SwiftUI
 import SwiftUIX
@@ -14,13 +17,14 @@ struct ContentView: View {
     
     @AppStorage("log_Status") var status = false
     @StateObject var model = ModelDataLogin()
-    @State var index = 0
+    //@State var index = 0
+    @Binding var index : Int
     
     var body: some View {
         
         if status{
             
-            homePage(index: self.$index)
+            homePage()
             
         }
         else{
@@ -39,21 +43,14 @@ struct ContentView_Previews: PreviewProvider {
         
         SingUpView(model: .init())
         
-        homePage(index: $index)
-        
+        homePage()
         
         horaDeActivar()
         
         tiempoActivo()
-        
-        
-        
+ 
         diasXActivar()
-        
-    
-        
-         // tiempoSlider()
-        
+
     }
 }
 
@@ -296,7 +293,6 @@ struct homePage: View {
     @AppStorage("log_Status") var status = false
     
     //DATOS DE FIREBASE
-    
     @AppStorage("DOM") var DOM = false
     @AppStorage("LUN") var LUN = false
     @AppStorage("MAR") var MAR = false
@@ -312,7 +308,8 @@ struct homePage: View {
     @AppStorage("minutosDeRiego") var minutosDeRiego = 10.0
     
     @State private var isToggled = false
-    @Binding var index : Int
+    //@Binding var index : Int
+    @State var index = 0
     
     @State var refresh = Refresh(started: false, released: false)
     var ref = Database.database().reference()
@@ -375,81 +372,51 @@ struct homePage: View {
                                 .animation(.easeIn)
                         }
                     }
-                    /*
-                     
-                     VStack{
-                     Text("Control de Riego")
-                     .offset(y: -42)
-                     .font(.title)
-                     .font(.system(size: 19, weight: .semibold, design: .rounded))
-                     .foregroundColor(Color("FontColor"))
-                     
-                     }
-                     
-                     */
-                    
+
                     VStack(alignment: .center){
                         HStack(alignment: .center ){
-                            
                             Button("Salir"){
                                 self.alertLogOut.toggle()
-                                
                             }.padding(.horizontal)
                             Spacer()
                             Text("Control de Riego")
                                 .offset(x: -32.5)
-                                // .font(.largeTitle)
                                 .font(.system(size: 31, weight: .semibold, design: .rounded))
-                                
                                 .foregroundColor(Color("font"))
-                            // .padding(.vertical)
-                            //Buttom
                             Spacer()
                         }
-                        //.frame(height: UIScreen.main.bounds.height -1)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         
                         HStack(alignment: .center, spacing:20 ){
                             
                             Button(action:  {
-                                withAnimation {
                                 self.index = 0
-                                }
                             }) {
                                 ZStack{
                                     Rectangle()
                                         .fill(Color("ColorPrimary"))
                                         .frame(width: 60, height: 60)
                                         .cornerRadius(20)
-                                    
                                     Image(systemName: "house")
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 21, height: 21)
-                                    
                                 }
-                                
                             }
                             .foregroundColor(Color.white)
                             
-                            
                             Button(action:  {
-                                withAnimation {
                                 self.index = 1
-                                }
                             }) {
                                 Image(systemName: "clock")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 21, height: 21)
-                                
                             }.buttonStyle(SimpleButtonStyle())
                             .foregroundColor(Color("font"))
                             
                             Button(action:  {
-                                withAnimation {
                                 self.index = 2
-                                }
                             }) {
                                 Image(systemName: "drop")
                                     .resizable()
@@ -460,25 +427,17 @@ struct homePage: View {
                             .foregroundColor(Color("font"))
                             
                             Button(action:  {
-                                withAnimation {
                                 self.index = 3
-                                }
                             }) {
-                                
                                 Image(systemName: "calendar")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 21, height: 21)
-                                
                             } .buttonStyle(SimpleButtonStyle())
                             .foregroundColor(Color("font"))
-                            
-                        }//.padding(.all)
+                        }
                         .padding(.top, 27)
-                        
                        Spacer(minLength: 13)
-                          //  .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        
                         ZStack{
                             Circle()
                                 .fill(Color.offWhite)
@@ -519,10 +478,7 @@ struct homePage: View {
                         }
                         .frame(width: width - 140, height: width - 140)
                         .padding(.all)
-                        // Spacer(minLength: 0)
                     }
-                    //  .frame(height: UIScreen.main.bounds.height + 20)
-                    // Spacer(minLength: 10)
                     .onAppear(perform: {
                         let calendar = Calendar.current
                         let MIN = calendar.component(.minute, from: Date())
@@ -541,35 +497,17 @@ struct homePage: View {
                             self.curreant_Time = analogClock(MIN: MIN, SEC: SEC, HOUR: HOUR)
                         }
                     }
-                    
-                    
-                    
                     VStack(alignment: .center, spacing: 7){
-                        
                         Text("Hora de Riego :")
                             .font(.system(size: 18))
-                        
-                        
-                        
                         Text(String(format: "%01d:%02d", hours1, minutes1))
                             .font(.title)
                             .fontWeight(.semibold)
-                        
                         Text("Activar :")
                             .font(.system(size: 18))
-                        // .font(.subheadline)
-                        
-                        
                         Text("\(Int (minutosDeRiego) ) Minutos")
-                            // Text("\(TiempoDeRiego) Minutos")
-                            // Text(String(format: "%01d:%02d", hoursOut1, minutesOut1))
-                            //Text(String(format: "%01d:%02d", hoursOut1, minutesOut1))
                             .font(.title)
                             .fontWeight(.semibold)
-                        //    }
-                        
-                        // Spacer()
-                        
                         Text("Repetir:")
                         HStack{
                             Image(systemName: DOM ? "d.circle" : "d.circle")
@@ -611,29 +549,23 @@ struct homePage: View {
                         .padding(.horizontal)
                         
                     }
-                    //.frame(height: UIScreen.main.bounds.height)
-                    //.padding(.bottom, 50)
                     .padding(.top)
-                    
                     .ignoresSafeArea()
                     .foregroundColor(Color("font"))
                     .offset(y: refresh.released ? 40 : -10)
                 })
                 .alert(isPresented: $alertLogOut, content: { self.alert } )
-                //  .padding(.top, 20)
-               // .frame(height: UIScreen.main.bounds.height)
-                
             }
             .frame(height: UIScreen.main.bounds.height)
-            if self.index == 1 {
+            if (self.index == 1) {
                 withAnimation {
                 horaDeActivar()
                 }
-            } else if self.index == 2 {
+            } else if (self.index == 2) {
                 withAnimation {
                 tiempoActivo()
                 }
-            } else if self.index == 3 {
+            } else if (self.index == 3) {
                 withAnimation {
                 diasXActivar()
                 }
@@ -683,10 +615,7 @@ struct horaDeActivar: View {
                     HStack(alignment: .center, spacing:20 ){
                         
                         Button(action:  {
-                            withAnimation {
                             self.index = 0
-                            }
-                            
                         }) {
                             Image(systemName: "house")
                                 .resizable()
@@ -696,112 +625,65 @@ struct horaDeActivar: View {
                         }
                         .buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
-                        //.background(Color)
-                        
-                        //.foregroundColor(.blue)
-                        
-                        //.foregroundColor(.white)
-                        // .accentColor(.white)
+
                         Button(action:  {
-                            withAnimation {
                             self.index = 1
-                            }
                         }) {
                             ZStack{
                                 Rectangle()
                                     .fill(Color("ColorPrimary"))
                                     .frame(width: 60, height: 60)
                                     .cornerRadius(20)
-                                
                                 Image(systemName: "clock")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 21, height: 21)
-                                
                             }
-                            
-                            
                         }
                         .foregroundColor(Color.white)
                         
                         Button(action:  {
-                            withAnimation {
                             self.index = 2
-                            }
                         }) {
                             Image(systemName: "drop")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            // .foregroundColor(.primary)
-                            //  .foregroundColor(.white)
                         }.buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
                         
-                        
                         Button(action:  {
-                            withAnimation {
                             self.index = 3
-                            }
                         }) {
-                            
-                            //.foregroundColor(.blue)
                             Image(systemName: "calendar")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            //.foregroundColor(.primary)
-                            //  .foregroundColor(.white)
                         } .buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
-                        
-                        
-                        
                     }
-                    
-                    //  Spacer(minLength: 10)
-                    
-                    //.padding(.all)
                     .padding(.vertical, 44)
-                    // Spacer()
-                    // .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    //Spacer()
-                }//.frame(width: UIScreen.main.bounds.width)
-                //.frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
                
                 Spacer()
                 VStack(alignment: .center, spacing: 25){
-                    
-                    
                     HStack{
                         Image(systemName: "clock")
                             .font(.system(size: 22, weight: .semibold, design: .rounded))
                             .foregroundColor(Color("font"))
                         Text("Hora de Inicio")
-                           // .fontWeight(.semibold)
-                         //   .font(.custom("Poppins", size: 20))
-                            
                            .font(.system(size: 22, weight: .semibold, design: .rounded))
-                            
                             .foregroundColor(Color("font"))
                             .font(.headline)
-                        // .padding(.vertical, 10)
                     }
                     
                     HStack(alignment: .center, spacing: 25){
-                        
                         ZStack {
-                            
                             RoundedRectangle(cornerRadius: 25)
                                 .fill(Color.offWhite)
                                 .frame(width: 80, height: 220)
                                 .shadow(color: Color.black.opacity(0.2), radius: 6, x: 10, y: 10)
                                 .shadow(color: Color.white.opacity(0.5), radius: 6, x: -8, y: -8)
-                            //  .shadow(color: Color(.black).opacity(0.14), radius: 20, x: 0, y: 20 )
-                            
-                            
-                            //   HStack {
-                            
                             Picker("", selection: $hours){
                                 ForEach(0..<24, id: \.self) { i in
                                     Text("\(i) ").tag(i)
@@ -809,19 +691,9 @@ struct horaDeActivar: View {
                                         .foregroundColor(Color("font"))
                                 }
                             }
-                            
-                            
                             .labelsHidden()
-                            // RoundedRectangle(cornerRadius: 25)
-                            // .fixedSize()
-                            // .backgroundColor(Color("font"))
                             .frame(width: 70)
-                            //  .fill(Color.offWhite)
-                            // .cornerRadius(20)
-                            // .clipped()
                             .clipShape(Capsule())
-                            
-                            // .cornerRadius(20)
                         }
                         
                         Text(":")
@@ -857,31 +729,16 @@ struct horaDeActivar: View {
                 .padding(.bottom, 35)
                 Spacer()
                 VStack{
-                    //  ZStack{
-                    /*
-                     RoundedRectangle(cornerRadius: 15)
-                     .stroke(lineWidth: 2.0)
-                     .fill(Color("ColorPrimary"))
-                     .frame(width: 200, height: 55)
-                     */
-                    
                     Button(action: {
                         self.dayD.guardarHora()
                         self.alertIsPresented = true
-                        
                     }) {
                         Text("Cambiar Hora")
-                            // .foregroundColor(Color.black.opacity(0.7))
                             .padding(.vertical)
                             .frame(width: UIScreen.main.bounds.width - 200)
-                        
                     }
                     .buttonStyle(ButtonModifier())
                     .foregroundColor(Color("ColorPrimary"))
-                    
-                    
-                    // }
-                    
                 }
                 
                 .padding(.bottom, 35)
@@ -891,15 +748,15 @@ struct horaDeActivar: View {
             .padding(.top, 20)
             .frame(height: UIScreen.main.bounds.height)
             
-            if self.index == 0 {
+            if (self.index == 0) {
                 withAnimation {
-                homePage(index: self.$index)
+                homePage()
                 }
-            } else if self.index == 2 {
+            } else if (self.index == 2) {
                 withAnimation {
                 tiempoActivo()
                 }
-            } else if self.index == 3 {
+            } else if (self.index == 3) {
                 withAnimation {
                 diasXActivar()
                 }
@@ -926,69 +783,39 @@ struct tiempoActivo: View {
         
         ZStack{
             Color.offWhite
-                //  Color("ColorBg1")
                 .edgesIgnoringSafeArea(.all)
             VStack{
                 VStack{
                     Text("Control de Riego")
                         .offset(y: 17)
-                        // .font(.title)
                         .font(.system(size: 31, weight: .semibold, design: .rounded))
                         .foregroundColor(Color("font"))
                     
                     HStack(alignment: .center, spacing:20 ){
-                        
-                        
-                        //   ActionButton(image: "calendar", isSelectedButton:
-                        //              $iconButton.calendar, animation: animation)
-                        
-                        
-                        
                         Button(action:  {
-                            withAnimation {
                             self.index = 0
-                            }
-                            
                         }) {
                             Image(systemName: "house")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            
                         }
                         .buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
-                        //.background(Color)
-                        
-                        //.foregroundColor(.blue)
-                        
-                        //.foregroundColor(.white)
-                        // .accentColor(.white)
+
                         Button(action:  {
-                            withAnimation {
                             self.index = 1
-                            }
-                            
-                            // FormNewData()
                         }) {
                             
                             Image(systemName: "clock")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            //   .foregroundColor(.primary)
-                            //.foregroundColor(.blue)
-                            
-                            //  .foregroundColor(.white)
                         }.buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
-                        
-                        
-                        
+
                         Button(action:  {
-                            withAnimation {
                             self.index = 2
-                            }
                         }) {
                             ZStack{
                                 Rectangle()
@@ -1000,47 +827,26 @@ struct tiempoActivo: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 21, height: 21)
-                                
                             }
-                            
                         }
                         .foregroundColor(Color.white)
                         
                         Button(action:  {
-                            withAnimation {
                             self.index = 3
-                            }
                         }) {
-                            
-                            
-                            //.foregroundColor(.blue)
                             Image(systemName: "calendar")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            //.foregroundColor(.primary)
-                            //  .foregroundColor(.white)
                         }
                         .buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
-                        
-                        
-                        
                     }
-                    //.padding(.all)
                     .padding(.vertical, 44)
-                    // Spacer(minLength: 0)
-                    // .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    
-                    //  Spacer()
-                    
                 }
-                
                 
                 Spacer()
                 VStack(alignment: .center, spacing: 37){
-                    
-                    
                     HStack{
                         Image(systemName: "timer")
                             .font(.system(size: 22, weight: .semibold, design: .rounded))
@@ -1049,112 +855,76 @@ struct tiempoActivo: View {
                             .font(.system(size: 22, weight: .semibold, design: .rounded))
                             .foregroundColor(Color("font"))
                             .font(.headline)
-                        //  .padding()
-                        
                     }
-                    
                     
                     VStack(spacing: 9){
                         ZStack {
-                            
                             Capsule()
                                 .fill(Color.offWhite)
-                                //  .fill(Color.white.opacity(0.40))
                                 .frame(width: 383, height: 59)
-                                // .shadow(color: Color(.black).opacity(0.14), radius: 20, x: 0, y: 20 )
                                 .shadow(color: Color.black.opacity(0.2), radius: 6, x: 10, y: 10)
                                 .shadow(color: Color.white.opacity(0.5), radius: 6, x: -8, y: -8)
-                            // .padding(.horizontal)
                             
                             HStack(alignment: .center){
-                                
-                                // Spacer()
-                                
                                 Text("10 min")
                                     .foregroundColor(Color("font"))
                                     .padding(.leading, 20)
-                                
-                                
                                 Slider(value: $TiempoDeRiego, in: 10...150, step: 1.0, onEditingChanged: { (editing) in
                                         isEditingSlider = editing})
-                                //   .padding()
                                 Text("150 min")
                                     .foregroundColor(Color("font"))
                                     .padding(.trailing, 20)
                             }
-                            
                         }
-                        
                         Text("\(Int (TiempoDeRiego ) ) Minutos")
                             .foregroundColor(isEditingSlider ? .green : Color("font"))
-                        // .foregroundColor(Color("FontColor"))
-                        
-                        
                     }
-                    // .padding(.top, -1)
-                    // }
                     .alert(isPresented: $alertIsPresented, content: {
                         Alert(title: Text("Datos Guardados"),
                               message: Text("El tiempo activo ha sido guardado correctamente"),
                               dismissButton: .default(Text("Ok")))
                     })
-                    //  Spacer()
                 }
                 .padding(.bottom, 35)
                 Spacer()
                 VStack{
-                    
-                    
                     Button(action:  {
                         self.dayD.guardarDesactivarHora()
                         self.alertIsPresented = true
                         
                     }) {
-                        
                         Text("Cambiar Tiempo")
                             .padding(.vertical)
                             .frame(width: UIScreen.main.bounds.width - 200)
                     }
                     .buttonStyle(ButtonModifier())
                     .foregroundColor(Color("ColorPrimary"))
-                    
-                    
                 }
                 .padding(.bottom, 35)
-                
             }
             .padding(.top, 20)
             .frame(height: UIScreen.main.bounds.height)
             
-            if self.index == 0 {
+            if (self.index == 0) {
                 withAnimation {
-                homePage(index: self.$index)
+                homePage()
                 }
-            } else if self.index == 1 {
+            } else if (self.index == 1) {
                 withAnimation {
                 horaDeActivar()
                 }
-            } else if self.index == 3 {
+            } else if (self.index == 3) {
                 withAnimation {
                 diasXActivar()
                 }
-                
-                
             }
-            
-            
-            
         }
-        
-        
     }
-    
 }
 
 struct diasXActivar: View {
     
     @State var index = 3
-    
     @AppStorage("lun") var lun = false
     @AppStorage("dom") var dom = false
     @AppStorage("mar") var mar = false
@@ -1169,115 +939,67 @@ struct diasXActivar: View {
     var body: some View {
         ZStack{
             Color.offWhite
-                //  Color("ColorBg1")
                 .edgesIgnoringSafeArea(.all)
-            
             VStack{
                 VStack{
                     
                     Text("Control de Riego")
                         .offset(y: 17)
-                        //  .font(.title)
                         .font(.system(size: 31, weight: .semibold, design: .rounded))
                         .foregroundColor(Color("font"))
-                    
                     HStack(alignment: .center, spacing:20 ){
-                        
                         Button(action:  {
-                            withAnimation {
                             self.index = 0
-                            }
-                            
                         }) {
                             Image(systemName: "house")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            
                         }
                         .buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
-                        //.background(Color)
                         
-                        //.foregroundColor(.blue)
-                        
-                        //.foregroundColor(.white)
-                        // .accentColor(.white)
                         Button(action:  {
-                            withAnimation {
                             self.index = 1
-                            }
-                            
-                            // FormNewData()
                         }) {
-                            
                             Image(systemName: "clock")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            //   .foregroundColor(.primary)
-                            //.foregroundColor(.blue)
-                            
-                            //  .foregroundColor(.white)
                         }.buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
                         
-                        
                         Button(action:  {
-                            withAnimation {
                             self.index = 2
-                            }
                         }) {
-                            
                             Image(systemName: "drop")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 21, height: 21)
-                            // .foregroundColor(.primary)
-                            
-                            //  .foregroundColor(.white)
                         }.buttonStyle(SimpleButtonStyle())
                         .foregroundColor(Color("font"))
                         
-                        
                         Button(action:  {
-                            withAnimation {
                             self.index = 3
-                            }
                         }) {
-                            
                             ZStack{
                                 Rectangle()
                                     .fill(Color("ColorPrimary"))
                                     .frame(width: 60, height: 60)
                                     .cornerRadius(20)
-                                
                                 Image(systemName: "calendar")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 21, height: 21)
-                                
                             }
-                            
                         }
                         .foregroundColor(Color.white)
-                        
-                        
-                        
-                        
-                        
                     }
-                    // .padding(.all)
                     .padding(.vertical, 44)
-                    // Spacer(minLength: 0)
-                    //   .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    // Spacer()
                 }
                 Spacer()
                 
                 VStack(alignment: .center, spacing: 25){
-                    
-                    
                     HStack{
                         Image(systemName: "calendar")
                             .font(.system(size: 22, weight: .semibold, design: .rounded))
@@ -1286,136 +1008,100 @@ struct diasXActivar: View {
                             .font(.system(size: 22, weight: .semibold, design: .rounded))
                             .foregroundColor(Color("font"))
                             .font(.headline)
-                        //  .padding()
-                        
-                        
                     }
-                    
-                    
-                    
                     ZStack{
                         RoundedRectangle(cornerRadius: 15)
                             .fill(Color.offWhite)
-                            // .fill(Color.white.opacity(0.40))
-                            // .frame(width: 355, height: 315)
                             .frame(width: 355, height: 305)
-                            // .frame(height: UIScreen.main.bounds.height)
-                            //  .shadow(color: Color(.black).opacity(0.14), radius: 20, x: 0, y: 20 )
                             .shadow(color: Color.black.opacity(0.2), radius: 6, x: 10, y: 10)
                             .shadow(color: Color.white.opacity(0.5), radius: 6, x: -8, y: -8)
-                        
                         VStack{
-                            //   List{
-                            
                             Toggle(isOn: $dom) {
                                 Text("Domingo")
                                     .font(.system(size: 18))
-                                    //.font(.custom("Poppins", size: 17))
                                     .padding(.leading, 20)
-                            } //.toggleStyle(CheckmarkToggleStyle())
+                            }
                             .padding(.trailing, 20)
                             
                             Toggle(isOn: $lun) {
                                 Text("Lunes")
-                                    // .font(.custom("Poppins", size: 17))
                                     .font(.system(size: 18))
                                     .padding(.leading, 20)
-                            }//.toggleStyle(CheckmarkToggleStyle())
+                            }
                             .padding(.trailing, 20)
                             
                             Toggle(isOn: $mar) {
                                 Text("Martes")
                                     .font(.system(size: 18))
-                                    // .font(.custom("Poppins", size: 17))
                                     .padding(.leading, 20)
-                            }//.toggleStyle(CheckmarkToggleStyle())
+                            }
                             .padding(.trailing, 20)
                             
                             Toggle(isOn: $mie) {
                                 Text("Miércoles")
                                     .font(.system(size: 18))
-                                    // .font(.custom("Poppins", size: 17))
                                     .padding(.leading, 20)
-                            }//.toggleStyle(CheckmarkToggleStyle())
+                            }
                             .padding(.trailing, 20)
                             
                             Toggle(isOn: $jue) {
                                 Text("Jueves")
                                     .font(.system(size: 18))
-                                    //.font(.custom("Poppins", size: 17))
                                     .padding(.leading, 20)
-                            }//.toggleStyle(CheckmarkToggleStyle())
+                            }
                             .padding(.trailing, 20)
                             
                             Toggle(isOn: $vie) {
                                 Text("Viernes")
                                     .font(.system(size: 18))
-                                    //  .font(.custom("Poppins", size: 17))
                                     .padding(.leading, 20)
-                            }//.toggleStyle(CheckmarkToggleStyle())
+                            }
                             .padding(.trailing, 20)
                             
                             Toggle(isOn: $sab) {
                                 Text("Sábado")
                                     .font(.system(size: 18))
-                                    // .font(.custom("Poppins", size: 17))
                                     .padding(.leading, 20)
-                            }//.toggleStyle(CheckmarkToggleStyle())
+                            }
                             .padding(.trailing, 20)
-                            
-                            //  }.frame(width: 348, height: 305)
-                            //  .foregroundColor(Color.offWhite)
-                            
-                        }//.frame(width: 348, height: 305)
+                        }
                         .padding(.all)
                         .foregroundColor(Color("font"))
-                        
                     }
-                    
-                    
-                    // }
                     .alert(isPresented: $alertIsPresented, content: {
                         Alert(title: Text("Datos Guardados"),
                               message: Text("Los días a activar han sido guardados correctamente"),
                               dismissButton: .default(Text("Ok")))
                     })
-                    // Spacer()
-                }//.padding(.top,20)
+                }
                 .padding(.bottom, 35)
                 Spacer()
                 VStack{
-                    
-                    
                     Button(action:  {
                         self.dayD.guardarDias()
                         self.alertIsPresented = true
-                        
                     }) {
-                        
                         Text("Cambiar Días")
                             .padding(.vertical)
                             .frame(width: UIScreen.main.bounds.width - 200)
                     }
                     .buttonStyle(ButtonModifier())
                     .foregroundColor(Color("ColorPrimary"))
-                    
-                    
                 }
                 .padding(.bottom, 35)
-                
             }
             .padding(.top, 20)
             .frame(height: UIScreen.main.bounds.height)
             
-            if self.index == 0 {
+            if (self.index == 0) {
                 withAnimation {
-                homePage(index: self.$index)
+                homePage()
                 }
-            } else if self.index == 1 {
+            } else if (self.index == 1) {
                 withAnimation {
                 horaDeActivar()
                 }
-            } else if self.index == 2 {
+            } else if (self.index == 2) {
                 withAnimation {
                 tiempoActivo()
                 }
@@ -1427,285 +1113,9 @@ struct diasXActivar: View {
 }
 
 struct analogClock {
-    
     var MIN : Int
     var SEC : Int
     var HOUR : Int
-}
-
-/*
-struct tiempoSlider: View {
-    @State var index = 2
-    @State var maxHeight: CGFloat = UIScreen.main.bounds.height / 3
-    
-    @State var alertIsPresented: Bool = false
-    @StateObject var dayD = varToFirebase()
-    //Slider Properties...
-    // @AppStorage("TiempoDeRiego") var TiempoDeRiego = 10.0
-    //   @AppStorage("sliderProgress") var sliderProgress = 0.0
-    // @AppStorage("Progress") var Progress ; let sliderPtogress
-    //@Binding var sliderProgress: CGFloat
-    
-    @AppStorage("tiempoDeRiego") var tiempoDeRiego = 0.0
-  
-    
-    
-    // @State var ss = UserDefaults.standard.defaults.setFloat(CGFloat(.sliderProgress), forKey: "ss")
-    
-    @State var sliderProgress: CGFloat = 0
-    @State var sliderHeight: CGFloat = 0
-    @State var lastDragValue: CGFloat = 0
-    
-    var body: some View {
-        
-        ZStack{
-            Color.offWhite
-                .ignoresSafeArea()
-            
-            VStack{
-                Text("Control de Riego")
-                    .font(.title)
-                    .font(.system(size: 19, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color("font"))
-                
-                HStack(alignment: .center, spacing:20 ){
-                    
-                    
-                    //   ActionButton(image: "calendar", isSelectedButton:
-                    //              $iconButton.calendar, animation: animation)
-                    
-                    
-                    
-                    Button(action:  {
-                        self.index = 0
-                        
-                    }) {
-                        Image(systemName: "house")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 21, height: 21)
-                        
-                    }
-                    .buttonStyle(SimpleButtonStyle())
-                    .foregroundColor(Color("font"))
-                    //.background(Color)
-                    
-                    //.foregroundColor(.blue)
-                    
-                    //.foregroundColor(.white)
-                    // .accentColor(.white)
-                    Button(action:  {
-                        self.index = 1
-                        
-                        // FormNewData()
-                    }) {
-                        
-                        Image(systemName: "clock")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 21, height: 21)
-                        //   .foregroundColor(.primary)
-                        //.foregroundColor(.blue)
-                        
-                        //  .foregroundColor(.white)
-                    }.buttonStyle(SimpleButtonStyle())
-                    .foregroundColor(Color("font"))
-                    
-                    
-                    
-                    Button(action:  {
-                        self.index = 2
-                    }) {
-                        ZStack{
-                            Rectangle()
-                                .fill( Color("ColorPrimary"))
-                                .frame(width: 60, height: 60)
-                                .cornerRadius(20)
-                            
-                            Image(systemName: "drop")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 21, height: 21)
-                            
-                        }
-                        
-                    }
-                    .foregroundColor(Color.white)
-                    
-                    Button(action:  {
-                        self.index = 3
-                    }) {
-                        
-                        
-                        //.foregroundColor(.blue)
-                        Image(systemName: "calendar")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 21, height: 21)
-                        //.foregroundColor(.primary)
-                        //  .foregroundColor(.white)
-                    } .buttonStyle(SimpleButtonStyle())
-                    .foregroundColor(Color("font"))
-                    
-                    
-                    
-                }.padding(.all)
-                .padding(.vertical, 36.5)
-                Spacer(minLength: 0)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                
-            }
-            
-            VStack(spacing: 37){
-                HStack{
-                    Image(systemName: "timer")
-                        .font(.system(size: 22, weight: .semibold, design: .rounded))
-                        .foregroundColor(Color("font"))
-                    Text("Tiempo Activo")
-                        .font(.system(size: 22, weight: .semibold, design: .rounded))
-                        .foregroundColor(Color("font"))
-                        .font(.headline)
-                    //  .padding()
-                    
-                }
-                
-                ZStack(alignment: .bottom, content: {
-                    
-                    Rectangle()
-                        .fill(Color("ColorPrimary").opacity(0.15))
-                    Rectangle()
-                        .fill(Color("ColorPrimary"))
-                        .frame(height: sliderHeight)
-                })
-                .frame(width: 105, height: maxHeight)
-                .cornerRadius(35)
-                .overlay(
-                    Text("\(Int(sliderProgress * 180)) min")
-                        .fontWeight(.semibold)
-                        .foregroundColor(.black)
-                        .padding(.vertical, 10)
-                        .padding(.horizontal, 18)
-                        .background(Color.white)
-                        .cornerRadius(10)
-                        .padding(.vertical, 30)
-                        .offset(y: sliderHeight < maxHeight - 105.0 ? -sliderHeight : -maxHeight + 105.0)
-                    
-                    ,alignment: .bottom
-                )
-                .gesture(DragGesture(minimumDistance: 0).onChanged({(value)in
-                    
-                    let translation = value.translation
-                    sliderHeight = -translation.height + lastDragValue
-                    
-                    sliderHeight = sliderHeight > maxHeight ? maxHeight : sliderHeight
-                    
-                    sliderHeight = sliderHeight >= 0 ? sliderHeight : 0
-                    
-                    let progress = sliderHeight / maxHeight
-                    
-                    sliderProgress = progress <= 1.0 ? progress : 1
-                    
-                    // UserDefaults.standard.set(self.sliderProgress, forKey: "Progress")
-                    
-                }).onEnded({(value) in
-                    
-                    sliderHeight = sliderHeight > maxHeight ? maxHeight : sliderHeight
-                    
-                    sliderHeight = sliderHeight >= 0 ? sliderHeight : 0
-                    
-                    lastDragValue = sliderHeight
-                    
-                    let progress = sliderHeight / maxHeight
-                    
-                    sliderProgress = progress <= 1.0 ? sliderProgress : 1
-                    
-                    
-                    
-                }))
-                .alert(isPresented: $alertIsPresented, content: {
-                    Alert(title: Text("Datos Guardados"), message: Text("El tiempo activo ha sido guardado correctamente"), dismissButton: .default(Text("Ok")))
-                })
-                
-             
-            }
-            VStack{
-                ZStack{
-                    RoundedRectangle(cornerRadius: 15)
-                        .stroke(lineWidth: 2.0)
-                        .fill(Color("ColorPrimary"))
-                        .frame(width: 200, height: 55)
-                    
-                    Button(action:  {
-                        self.dayD.guardarDesactivarHora()
-                        self.alertIsPresented = true
-                        
-                       // self.slider1 = Double(sliderProgress)
-                        //  self.tiempoDeRiego = sliderProgress
-                        UserDefaults.standard.set(self.sliderProgress, forKey: "Progress")
-                        
-                        
-                    }) {
-                        
-                        Text("Cambiar Tiempo")
-                    }
-                }
-            }.padding(.top, 700)
-            
-            if self.index == 0 {
-                homePage(index: self.$index)
-            } else if self.index == 1 {
-                horaDeActivar()
-            } else if self.index == 3 {
-                diasXActivar()
-                
-                
-            }
-            
-        }
-        
-    }
-    
-}
- 
-*/
-struct CheckmarkToggleStyle: ToggleStyle {
-    
-    func makeBody(configuration: Configuration) -> some View {
-        
-        HStack {
-            configuration.label
-            Spacer()
-            Rectangle()
-                .foregroundColor(configuration.isOn ? .green : .secondary)
-                .frame(width: 51, height: 31, alignment: .center)
-                .opacity(1.8)
-                .overlay(
-                    Circle()
-                        .foregroundColor(.white)
-                        .padding(.all, 3)
-                        .overlay(
-                            Image(systemName: configuration.isOn ? "checkmark" : "xmark")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .font(Font.title.weight(.black))
-                                .frame(width: 8, height: 8, alignment: .center)
-                                .opacity(1.8)
-                                .foregroundColor(configuration.isOn ? .green : .secondary)
-                        )
-                        
-                        .offset(x: configuration.isOn ? 11 : -11, y: 0)
-                        .animation(Animation.linear(duration: 0.1))
-                    
-                ).cornerRadius(20)
-                .onTapGesture { configuration.isOn.toggle() }
-            
-        }
-        .padding(.vertical, 3)
-        .padding(.horizontal)
-    }
-    
-    
 }
 
 struct Refresh {
@@ -2105,9 +1515,7 @@ class varToFirebase : ObservableObject {
                 print("Error getting data \(error)")
             }
             else if snapshot.exists() {
-                //  print("Sabado : \(snapshot.value!)")
                 self.SAB = (snapshot.value!) as! Bool
-                // print("Sabado \(self.SAB)")
             }
         }
         
@@ -2116,39 +1524,11 @@ class varToFirebase : ObservableObject {
 }
 
 extension Color {
-    // static let offWhite = Color(red: 225 / 255, green: 225 / 255, blue: 235 / 255)
     static let offWhite = Color("CC")
 }
 
-struct SimpleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
-            .padding(20)
-            .background(
-                Group{
-                    if configuration.isPressed{
-                        Rectangle()
-                            // .fill(self.index == 1 ? Color("ColorPrimary") : Color.offWhite)
-                            .fill(Color.offWhite)
-                    } else{
-                        Rectangle()
-                            // .fill(self.index == 1 ? Color("ColorPrimary") : Color.offWhite)
-                            .fill(Color.offWhite)
-                            .frame(width: 60, height: 60)
-                            //.foregroundColor(self.index == 1 ? Color("ColorPrimary") : Color.black.opacity(0.3))
-                            .cornerRadius(20)
-                            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 10, y: 10)
-                            .shadow(color: Color.white.opacity(0.5), radius: 6, x: -8, y: -8)
-                    }
-                    
-                })
-    }
-}
-
 struct TopModifier : ViewModifier {
-    
     func body(content: Content) -> some View {
-        
         content.background(Color("CC"))
             .cornerRadius(15)
             .shadow(color: Color.black.opacity(0.2), radius: 6, x: 10, y: 10)
@@ -2168,8 +1548,7 @@ struct TFModifier : ViewModifier {
                     .shadow(color: Color.black.opacity(0.2), radius: 3, x: 5, y: 5)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .shadow(color: Color.white.opacity(0.5), radius: 3, x: -5, y: -5)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-            )
+                    .clipShape(RoundedRectangle(cornerRadius: 15)))
     }
 }
 
@@ -2202,3 +1581,23 @@ extension View {
     }
 }
 
+struct SimpleButtonStyle: ButtonStyle {
+func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .padding(20)
+            .background(
+                Group{
+if configuration.isPressed{
+Rectangle()
+                            .fill(Color.offWhite)
+                    } else{
+Rectangle()
+                            .fill(Color.offWhite)
+                            .frame(width: 60, height: 60)
+                            .cornerRadius(20)
+                            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 10, y: 10)
+                            .shadow(color: Color.white.opacity(0.5), radius: 6, x: -8, y: -8)
+                    }
+                })
+    }
+}
